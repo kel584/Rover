@@ -12,6 +12,7 @@ from camera_controller import CameraController
 from data_logger import DataLogger
 from sensor_controller import SensorController
 from gps_reader import GpsReader 
+from arm_controller import ArmController
 
 def main():
     
@@ -21,6 +22,7 @@ def main():
     Device.pin_factory = PiGPIOFactory()
 
     motors = MotorController(left_pins=((config.MOTOR_LEFT_FRONT_FORWARD, config.MOTOR_LEFT_FRONT_BACKWARD),(config.MOTOR_LEFT_REAR_FORWARD, config.MOTOR_LEFT_REAR_BACKWARD)), right_pins=((config.MOTOR_RIGHT_FRONT_FORWARD, config.MOTOR_RIGHT_FRONT_BACKWARD),(config.MOTOR_RIGHT_REAR_FORWARD, config.MOTOR_RIGHT_REAR_BACKWARD)), left_enable_pins=(config.MOTOR_LEFT_FRONT_ENABLE,config.MOTOR_LEFT_REAR_ENABLE), right_enable_pins=(config.MOTOR_RIGHT_FRONT_ENABLE,config.MOTOR_RIGHT_REAR_ENABLE))
+    arm = ArmController(shoulder_pins=(config.MOTOR_ARM_SHOULDER_FORWARD, config.MOTOR_ARM_SHOULDER_BACKWARD, config.MOTOR_ARM_SHOULDER_ENABLE), elbow_pins=(config.MOTOR_ARM_ELBOW_FORWARD, config.MOTOR_ARM_ELBOW_BACKWARD, config.MOTOR_ARM_ELBOW_ENABLE), hand_pins=(config.MOTOR_ARM_HAND_FORWARD, config.MOTOR_ARM_HAND_BACKWARD, config.MOTOR_ARM_HAND_ENABLE))
     gamepad = GamepadController()
     camera = CameraController(save_dir=f"{config.SD_CARD_PATH}/photos")
     sensors = SensorController()
@@ -31,6 +33,8 @@ def main():
     current_heading = 0.0
     last_heading_time = time.time()
 
+    control_mode = "drive"  # Başlangıç kontrol modu
+
     print("Kurulum tamamlandı. ARCRover hazır.")
     print(f"Fotoğraf için '{config.GAMEPAD_BUTTON_PHOTO}' basın")
     print(f"Log için '{config.GAMEPAD_BUTTON_LOG_DATA}' basın")
@@ -38,26 +42,41 @@ def main():
     # --- Main Loop ---
     try:
         while True:
-           
-            forward_speed, turn_speed = gamepad.get_drive_values()
-            _, gyro, _ = sensors.read_imu()
+
+            if gamepad.was_button_pressed(config.GAMEPAD_BUTTON_TOGGLE_MODE):
+                if control_mode == "drive":
+                    control_mode = "arm"
+                    motors.stop()
+                    
+                else:
+                    control_mode = "drive"
+                    arm.stop()
+                print(f"Kontrol modu değiştirildi: {control_mode}")    
+
+            if control_mode == "drive":
+                forward_speed, turn_speed = gamepad.get_drive_values()
+                _, gyro, _ = sensors.read_imu()
 
             
-            if gyro and gyro[2] is not None:
-                dt = time.time() - last_heading_time
+                if gyro and gyro[2] is not None:
+                    dt = time.time() - last_heading_time
 
-                current_heading += gyro[2] * dt
-                current_heading = current_heading % 360.0
-                last_heading_time = time.time()
+                    current_heading += gyro[2] * dt
+                    current_heading = current_heading % 360.0
+                    last_heading_time = time.time()
 
-            should_stabilize_now = (forward_speed !=0 and turn_speed == 0)
+                should_stabilize_now = (forward_speed !=0 and turn_speed == 0)
 
-            if should_stabilize_now and not is_stabilizing:
-                motors.set_target_heading(current_heading)
+                if should_stabilize_now and not is_stabilizing:
+                    motors.set_target_heading(current_heading)
 
-            is_stabilizing = should_stabilize_now
+                is_stabilizing = should_stabilize_now
 
-            motors.drive(forward_speed, turn_speed, is_stabilizing, current_heading)
+                motors.drive(forward_speed, turn_speed, is_stabilizing, current_heading)
+           
+            elif control_mode == "arm":
+                shoulder, elbow, hand = gamepad.get_arm_values()
+                arm.control_arm(shoulder, elbow, hand)
            
             if gamepad.was_button_pressed(config.GAMEPAD_BUTTON_PHOTO):
                 print("Fotoğraf çekme butonuna basıldı!")
@@ -83,6 +102,9 @@ def main():
         
         motors.stop()
         gps.stop() 
+        arm.stop()
+        camera.stop()
+        logger.close()
         print("Rover durduruldu.")
 
 

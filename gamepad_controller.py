@@ -3,12 +3,14 @@
 from inputs import get_gamepad
 import threading
 import config
+import math
 
 class GamepadController:
     #başka threadde çalışıyor
     def __init__(self):
         self.left_y = 0
         self.right_x = 0
+        self.dpad_y = 0
         self.pressed_buttons = set()
         self.newly_pressed_buttons = set()
 
@@ -39,6 +41,8 @@ class GamepadController:
                 self.left_y = -event.state
             elif event.code == config.GAMEPAD_AXIS_RIGHT_X:
                 self.right_x = event.state
+            elif event.code == config.GAMEPAD_AXIS_DPAD_Y: 
+                self.dpad_y = event.state #-1 up 1 down
         # Button events
         elif event.ev_type == 'Key':
             if event.state == 1:  # Button basıldı
@@ -58,8 +62,28 @@ class GamepadController:
             forward = 0.0
         if abs(turn) < config.GAMEPAD_DEADZONE:
             turn = 0.0
-            
+        turn = math.copysign(pow(abs(turn), config.GAMEPAD_TURN_EXPO), turn)
         return forward, turn
+    
+    def get_arm_values(self):
+        shoulder_speed = 0.0
+        elbow_speed = 0.0
+        hand_speed = 0.0
+
+
+        shoulder_speed = -self.dpad_y
+
+        if config.GAMEPAD_BUTTON_L1 in self.pressed_buttons:
+            elbow_speed = 1.0
+        elif config.GAMEPAD_BUTTON_L2 in self.pressed_buttons:
+            elbow_speed = -1.0
+        if config.GAMEPAD_BUTTON_R1 in self.pressed_buttons:
+            hand_speed = 1.0
+        elif config.GAMEPAD_BUTTON_R2 in self.pressed_buttons:
+            hand_speed = -1.0
+
+        return shoulder_speed, elbow_speed, hand_speed
+    
 
     def was_button_pressed(self, button_code):
 
