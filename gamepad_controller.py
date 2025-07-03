@@ -66,17 +66,18 @@ class GamepadController:
         return forward, turn
     
     def get_arm_values(self):
-        shoulder_speed = 0.0
+        
         elbow_speed = 0.0
         hand_speed = 0.0
-
-
+        
         shoulder_speed = -self.dpad_y
 
+        
         if config.GAMEPAD_BUTTON_L1 in self.pressed_buttons:
             elbow_speed = 1.0
         elif config.GAMEPAD_BUTTON_L2 in self.pressed_buttons:
             elbow_speed = -1.0
+        
         if config.GAMEPAD_BUTTON_R1 in self.pressed_buttons:
             hand_speed = 1.0
         elif config.GAMEPAD_BUTTON_R2 in self.pressed_buttons:

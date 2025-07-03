@@ -34,8 +34,7 @@ class CameraController:
         except Exception as e:
             print(f"[ERROR] Fotoğrafı çekerken hata: {e}")
 
-    def __del__(self):
-        
+    def stop(self):
         if self.camera.started:
             self.camera.stop()
             print("Kamera durduruldu.")

@@ -91,10 +91,10 @@ def main():
                 air_humidity, temp = sensors.read_dht11()
                 soil_moisture = sensors.read_soil_moisture()
                 accel, gyro, mag = sensors.read_imu()
-                location = gps.get_location() 
+                location = gps.get_location()
 
                 
-                logger.log(air_humidity, temp, soil_moisture, location, accel, gyro, mag) 
+                logger.log(location, air_humidity, temp, soil_moisture, accel, gyro, mag)
 
             
             time.sleep(0.02)
@@ -104,10 +104,10 @@ def main():
     finally:
         
         motors.stop()
-        gps.stop() 
         arm.stop()
+        servos.stop()
+        gps.stop()
         camera.stop()
-        logger.close()
         print("Rover durduruldu.")
 
 

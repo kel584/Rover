@@ -20,7 +20,8 @@ GAMEPAD_BUTTON_R1 = 'BTN_TR'      # Right Bumper (Hand)
 GAMEPAD_BUTTON_R2 = 'BTN_TR2'     # Right Trigger (Hand)
 GAMEPAD_AXIS_DPAD_Y = 'ABS_HAT0Y' # D-Pad Up/Down (Shoulder)
 
-GAMEPAD_DEADZONE = 0.1
+GAMEPAD_DEADZONE = 0.5
+GAMEPAD_TURN_EXPO = 2.0
 
 #driver 1
 MOTOR_LEFT_FRONT_FORWARD = 17 #IN1 forward
@@ -54,7 +55,7 @@ MOTOR_ARM_HAND_FORWARD = 8 #IN3 forward
 MOTOR_ARM_HAND_BACKWARD = 7 #IN4 backward 
 MOTOR_ARM_HAND_ENABLE = 15 #ENB speed
 
-CAMERA_SERVO_PIN = 25 
+CAMERA_SERVO_PIN = 25 #kullanılmıyor kamera kepçeye bağlı 
 ARM_BASE_SERVO_PIN = 12    
 
 #IMU stabilizasyon değerleri, değişebilir
