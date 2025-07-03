@@ -13,6 +13,7 @@ from data_logger import DataLogger
 from sensor_controller import SensorController
 from gps_reader import GpsReader 
 from arm_controller import ArmController
+from servo_controller import ServoController
 
 def main():
     
@@ -28,6 +29,7 @@ def main():
     sensors = SensorController()
     gps = GpsReader() 
     logger = DataLogger(file_path=f"{config.SD_CARD_PATH}/sensor_log.csv")
+    servos = ServoController(base_pin=config.ARM_BASE_SERVO_PIN)
 
     is_stabilizing = False
     current_heading = 0.0
@@ -75,8 +77,9 @@ def main():
                 motors.drive(forward_speed, turn_speed, is_stabilizing, current_heading)
            
             elif control_mode == "arm":
-                shoulder, elbow, hand = gamepad.get_arm_values()
+                shoulder, elbow, hand, base_rotation = gamepad.get_arm_values()
                 arm.control_arm(shoulder, elbow, hand)
+                servos.control_base_rotation(base_rotation)
            
             if gamepad.was_button_pressed(config.GAMEPAD_BUTTON_PHOTO):
                 print("Fotoğraf çekme butonuna basıldı!")

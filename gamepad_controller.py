@@ -82,7 +82,11 @@ class GamepadController:
         elif config.GAMEPAD_BUTTON_R2 in self.pressed_buttons:
             hand_speed = -1.0
 
-        return shoulder_speed, elbow_speed, hand_speed
+        base_rotation_speed = self.right_x / 32767.0
+        if abs(base_rotation_speed) < config.GAMEPAD_DEADZONE:
+            base_rotation_speed = 0.0
+
+        return shoulder_speed, elbow_speed, hand_speed, base_rotation_speed
     
 
     def was_button_pressed(self, button_code):

@@ -55,12 +55,12 @@ MOTOR_ARM_HAND_BACKWARD = 7 #IN4 backward
 MOTOR_ARM_HAND_ENABLE = 15 #ENB speed
 
 CAMERA_SERVO_PIN = 25 
-ARM_SERVO_PIN = 12    
+ARM_BASE_SERVO_PIN = 12    
 
 #IMU stabilizasyon değerleri, değişebilir
 STABILIZE_KP = 0.8  # Proportional gain
 STABILIZE_KI = 0.2  # Integral gain
-
+ARM_BASE_ROTATION_SPEED = 2.0 # degrees per second
 # DHT11 
 DHT11_PIN = 4 
 
