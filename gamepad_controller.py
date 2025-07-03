@@ -52,6 +52,13 @@ class GamepadController:
         # -1 0 arası değere kısıtla
         forward = self.left_y / 32767.0
         turn = self.right_x / 32767.0
+
+        #Deadzone kontrolü
+        if abs(forward) < config.GAMEPAD_DEADZONE:
+            forward = 0.0
+        if abs(turn) < config.GAMEPAD_DEADZONE:
+            turn = 0.0
+            
         return forward, turn
 
     def was_button_pressed(self, button_code):
