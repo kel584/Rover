@@ -1,8 +1,52 @@
 # config.py
-
+import cv2
 
 SD_CARD_PATH = "/home/pi/ARCRover/SDCard"
 
+MISSION_PLAN = [
+    {"id": 11, "gps": (41.0851, 29.0451), "color": "red"},
+    {"id": 40, "gps": (41.0852, 29.0452), "color": "green"},
+    {"id": 17, "gps": (41.0853, 29.0453), "color": "blue"},
+    {"id": 65, "gps": (41.0854, 29.0454), "color": "red"},
+    {"id": 72, "gps": (41.0855, 29.0455), "color": "green"},
+    {"id": 77, "gps": (41.0856, 29.0456), "color": "blue"},
+    {"id": 93, "gps": (41.0857, 29.0457), "color": "red"},
+    {"id": 93, "gps": (41.0858, 29.0458), "color": "green"},
+    {"id":  1, "gps": (41.0859, 29.0459), "color": "blue"},
+    {"id": 60, "gps": (41.0860, 29.0460), "color": "red"}
+]
+
+ARUCO_DICTIONARY = cv2.aruco.DICT_5X5_100
+
+COLOR_RANGES = {
+    "red": ((0, 120, 70), (10, 255, 255)),
+    "green": ((36, 100, 70), (86, 255, 255)),
+    "blue": ((94, 100, 70), (126, 255, 255)),
+}
+
+SCAN_ROTATION_SPEED = 0.3      # arama modunda dönme hızı
+VISUAL_HOMING_KP_TURN = 0.5    # görsel homing için P kazancı
+VISUAL_HOMING_KP_FORWARD = 0.01# görsel homing için P kazancı
+VISUAL_TARGET_TAG_AREA = 15000 # (pixels^2) hedef etiket alanı
+
+
+NAV_ARRIVAL_DISTANCE = 2.0
+NAV_ARRIVAL_DISTANCE_PX = 25.0
+NAV_FORWARD_SPEED = 0.5
+NAV_KP = 1.2
+NAV_KI = 0.01
+NAV_KD = 0.05
+SCAN_ROTATION_SPEED = 0.3
+NAV_DEADBAND = 5.0
+NAV_TURN_RATE_LIMIT = 60.0
+NAV_TURN_MAX = 1.0
+NAV_STATE_ERROR_THRESHOLD = 10.0
+NAV_KP_MOVE = 0.3
+NAV_TURN_MOVE_MAX = 0.4
+NAV_ARRIVAL_DISTANCE = 0.2
+VISUAL_HOMING_KP_TURN = 0.5
+VISUAL_HOMING_KP_FORWARD = 0.01
+VISUAL_TARGET_TAG_AREA = 15000
 
 GAMEPAD_AXIS_LEFT_Y = 'ABS_Y'
 GAMEPAD_AXIS_RIGHT_X = 'ABS_RX'
@@ -13,6 +57,7 @@ GAMEPAD_BUTTON_Y = 'BTN_NORTH'
 GAMEPAD_BUTTON_PHOTO = GAMEPAD_BUTTON_X  
 GAMEPAD_BUTTON_LOG_DATA = GAMEPAD_BUTTON_A 
 GAMEPAD_BUTTON_TOGGLE_MODE = GAMEPAD_BUTTON_Y
+GAMEPAD_BUTTON_NAV_START = GAMEPAD_BUTTON_B
 
 GAMEPAD_BUTTON_L1 = 'BTN_TL'      # Left Bumper (Elbow)
 GAMEPAD_BUTTON_L2 = 'BTN_TL2'     # Left Trigger (Elbow)
